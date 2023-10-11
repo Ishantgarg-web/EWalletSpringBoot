@@ -7,7 +7,15 @@ import javax.validation.constraints.NotBlank;
 import com.example.UserIdentifier;
 import com.example.entities.User;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserCreateRequest {
 	
 	@NotBlank
@@ -19,8 +27,6 @@ public class UserCreateRequest {
 	@NotBlank
 	private String phone;
 	
-	@Enumerated(EnumType.STRING)
-	private PaymentPurpose paymentPurpose;
 	
 	@NotBlank
 	private String password;
@@ -37,7 +43,6 @@ public class UserCreateRequest {
 				.email(this.email)
 				.phoneNo(this.phone)
 				.password(this.password)
-				.paymentPurpose(this.paymentPurpose)
 				.userIdentifier(this.userIdentifier)
 				.userIdentifierValue(this.userIdentifierValue)
 				.build();

@@ -46,8 +46,6 @@ public class User implements UserDetails{
 	@Column(unique = true)
 	private String phoneNo;
 	
-	@Enumerated(EnumType.STRING)
-	private PaymentPurpose paymentPurpose;
 	
 	private String password;
 	
