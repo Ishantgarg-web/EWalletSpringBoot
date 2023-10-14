@@ -5,6 +5,16 @@
     <artifactId>EWallet</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>com.example</groupId>
+  		<artifactId>utils</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	
+  </dependencies>
+  
   <artifactId>transaction-service</artifactId>
   <name>transaction-service</name>
   <description>this is for handling all transactions</description>

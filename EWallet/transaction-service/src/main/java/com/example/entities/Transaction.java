@@ -6,33 +6,40 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
-import com.example.UserIdentifier;
+import com.example.PaymentPurpose;
+import com.example.enums.TransactionStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Wallet {
+@Entity
+public class Transaction {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	private Long userid;
+	@NotBlank
+	private String sender;
 	
-	private String phone;
+	@NotBlank
+	private String receiver;
+	
+	@NotBlank
+	private PaymentPurpose paymentPurpose;
 	
 	@Enumerated(EnumType.STRING)
-	private UserIdentifier userIdentitifier;
+	private TransactionStatus transactionStatus;
 	
-	private String userIdentifierValue;
-	
-	private Double balance;
+	@Positive
+	private Double amount;
 }
