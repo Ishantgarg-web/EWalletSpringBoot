@@ -7,6 +7,5 @@
   </parent>
   <artifactId>utils</artifactId>
   <name>utils</name>
-  <version>1.0.0</version>
   <description>for common constants like things</description>
 </project>

@@ -21,7 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.UserIdentifier;
 import com.example.constants.UserConstants;
-import com.example.dtos.PaymentPurpose;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,7 +44,6 @@ public class User implements UserDetails{
 	
 	@Column(unique = true)
 	private String phoneNo;
-	
 	
 	private String password;
 	
