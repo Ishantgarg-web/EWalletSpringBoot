@@ -42,9 +42,8 @@ public class UserService implements UserDetailsService{
 		return userRepository.findByPhoneNo(username);
 	}
 	
-	public void create(UserCreateRequest userCreateRequest) {
+	public void create(UserCreateRequest userCreateRequest) throws JsonProcessingException {
 		User user = userCreateRequest.toUser();
-		logger.info("check1");
 		user.setAuthorities(UserConstants.USER_AUTHORITITY);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user = userRepository.save(user);
@@ -57,6 +56,8 @@ public class UserService implements UserDetailsService{
 		jsonObject.put(CommonConstants.USER_CREATION_TOPIC_PHONE, user.getPhoneNo());
 		jsonObject.put(CommonConstants.USER_CREATION_TOPIC_IDENTIFIER_KEY, user.getUserIdentifier());
 		jsonObject.put(CommonConstants.USER_CREATION_TOPIC_IDENTIFIER_VALUE, user.getUserIdentifierValue());
+		
+		logger.info(objectMapper.writeValueAsString(jsonObject));
 		
 		try {
 			kafkaTemplate.send(CommonConstants.USER_CREATION_TOPIC, objectMapper.writeValueAsString(jsonObject));

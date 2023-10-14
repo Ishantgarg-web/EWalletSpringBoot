@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaListener;
+
 import org.springframework.stereotype.Service;
+
 
 import com.example.CommonConstants;
 import com.example.UserIdentifier;
@@ -20,18 +22,19 @@ public class WalletService {
 	@Autowired
 	WalletRepository walletRepository;
 	
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(WalletService.class);
+	
 	/**
 	 * need to create a method that will consume message from user-service
 	 * and will create a wallet based on details.
 	 * @throws ParseException 
 	 */
 	
-	private static Logger logger = org.slf4j.LoggerFactory.getLogger(WalletService.class);
-	
 	@KafkaListener(topics = CommonConstants.USER_CREATION_TOPIC, groupId = "grp123")
 	public void create(String message) throws ParseException {
 		JSONObject jsonObject = (JSONObject) new JSONParser().parse(message);
 		
+
 		logger.info("jsonObject: "+jsonObject);
 		
 		// Now, extract details from jsonObject into variables.
@@ -44,6 +47,8 @@ public class WalletService {
 		String userIdentifierValue = (String) jsonObject.get(CommonConstants.USER_CREATION_TOPIC_IDENTIFIER_VALUE);
 
 		
+		logger.info("coming here...check1");
+		
 		Wallet wallet = Wallet.builder()
 							.userid(userid)
 							.phone(phone)
@@ -51,8 +56,11 @@ public class WalletService {
 							.userIdentifierValue(userIdentifierValue)
 							.balance(100.0)
 							.build();
+		logger.info("coming here...check2");
+		
 		wallet = walletRepository.save(wallet);
-		logger.info("wallet saved in db: "+wallet);
+		
+		logger.info("wallet saved successfully in db");
 	}
 	
 }
