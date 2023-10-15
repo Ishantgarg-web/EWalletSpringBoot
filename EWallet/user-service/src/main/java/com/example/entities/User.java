@@ -19,8 +19,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.UserConstants;
 import com.example.UserIdentifier;
-import com.example.constants.UserConstants;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

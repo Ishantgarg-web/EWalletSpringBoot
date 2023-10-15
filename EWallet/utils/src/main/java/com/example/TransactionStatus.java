@@ -1,7 +1,8 @@
-package com.example.enums;
+package com.example;
 
 public enum TransactionStatus {
 	IN_PROGRESS,
 	FAILURE,
-	SUCCESS
+	SUCCESS,
+	PENDING
 }

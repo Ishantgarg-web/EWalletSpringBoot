@@ -1,6 +1,7 @@
-package com.example.constants;
+package com.example;
 
 public class UserConstants {
+	
 	public static final String AUTHORITIES_DELIMITIER = ",";
 	
 	public static final String USER_AUTHORITITY = "usr";
