@@ -8,5 +8,6 @@ package com.example;
 public enum UserIdentifier {
 	AADHAR,
 	PAN,
-	PASSPORT
+	PASSPORT, 
+	SERVICE_ID
 }

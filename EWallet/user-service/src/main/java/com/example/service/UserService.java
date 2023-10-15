@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.CommonConstants;
-import com.example.constants.UserConstants;
+import com.example.UserConstants;
 import com.example.dtos.UserCreateRequest;
 import com.example.entities.User;
 import com.example.repository.UserRepository;
@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService{
 	private static Logger logger = org.slf4j.LoggerFactory.getLogger(UserService.class);
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public User loadUserByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.findByPhoneNo(username);
 	}
 	

@@ -1,5 +1,7 @@
 package com.example.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,8 +11,11 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.example.PaymentPurpose;
-import com.example.enums.TransactionStatus;
+import com.example.TransactionStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +39,7 @@ public class Transaction {
 	@NotBlank
 	private String receiver;
 	
-	@NotBlank
+	@Enumerated(EnumType.STRING)
 	private PaymentPurpose paymentPurpose;
 	
 	@Enumerated(EnumType.STRING)
@@ -42,4 +47,12 @@ public class Transaction {
 	
 	@Positive
 	private Double amount;
+	
+	private String transactionId;
+	
+	@CreationTimestamp
+	private Date createdOn;
+	
+	@UpdateTimestamp
+	private Date updatedOn;
 }
