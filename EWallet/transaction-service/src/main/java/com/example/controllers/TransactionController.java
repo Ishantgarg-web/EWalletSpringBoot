@@ -27,7 +27,8 @@ public class TransactionController {
 	private String initiateTransaction(@RequestParam("receiver") String receiver,
 									   @RequestParam("amount") Double amount,
 									   @RequestParam("paymentPurpose") PaymentPurpose paymentPurpose) throws JsonProcessingException {
-		
+	
+		// [IMPORTANT]
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
 		
