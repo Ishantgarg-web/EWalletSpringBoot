@@ -56,10 +56,19 @@ public class TransactionService implements UserDetailsService{
 	 * @param username
 	 * This method getUserFromUserService is used to getting details from user_service.
 	 * First it authenticated himself with provided credentials.
+	 * 
+	 * [IMPORTANT]
+	 * How does below two methods are working?
+	 * When you will passing username and password in Authorization header, then before going in
+	 * the /transact api, first it will get the details from user_service about the current
+	 * authenticated user. is it valid or not?
+	 * 
+	 * if everything seems fine, then it will proceed with /transact api.
+	 * 
 	 * @return
 	 */
 	private JSONObject getUserFromUserService(String username){
-
+		logger.info("in getUserFromUserService");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBasicAuth("txn_service","txn123");
         HttpEntity request = new HttpEntity(httpHeaders);
@@ -69,8 +78,9 @@ public class TransactionService implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		logger.info("coming in transactionService...check3");
 		JSONObject requestUser = getUserFromUserService(username);
-		
+		logger.info("coming in transactionService...check4");
 		// This requestUser is the object that we are getting from user_service.
 		
 		List<GrantedAuthority> authorities;
@@ -88,8 +98,6 @@ public class TransactionService implements UserDetailsService{
 	}
 	
 	public String initiateTransaction(String sender, String receiver, Double amount, PaymentPurpose paymentPurpose) throws JsonProcessingException {
-		
-		logger.info("initiateTransaction check1");
 		
 		Transaction transaction = Transaction.builder()
 									.sender(sender)

@@ -11,6 +11,18 @@ import com.example.entities.Transaction;
 @Transactional
 public interface TransactionRepository extends JpaRepository<Transaction, Integer>{
 	
+	/***
+	 * 
+	 * @param transactionId
+	 * @param transactionStatus
+	 * 
+	 * 
+	 * [IMPORTANT]
+	 * When you write any custom query, that is related to modifying like update or delete.
+	 * please mention @Modifying annotation with @Transactional annotation.
+	 */
+	
+	
 	@Modifying
 	@Query("update Transaction t set t.transactionStatus = ?2 where t.transactionId = ?1")
 	void updateTransaction(String transactionId, TransactionStatus transactionStatus);
