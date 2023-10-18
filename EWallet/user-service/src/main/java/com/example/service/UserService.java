@@ -3,7 +3,11 @@ package com.example.service;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -68,4 +72,35 @@ public class UserService implements UserDetailsService{
 		
 	}
 	
+	public ResponseEntity<Object> getUser(String userName) {
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) authentication.getPrincipal();
+		
+		if(user.getUsername().equals(userName)) {
+			User tempUser = loadUserByUsername(userName);
+			tempUser.setPassword("We can not show");
+			return new ResponseEntity<Object>(loadUserByUsername(userName),HttpStatus.OK);
+		}
+		return new ResponseEntity<>("Please provide proper details",HttpStatus.BAD_REQUEST);
+	}
+
+	public ResponseEntity<Object> updateUserNameAndEmail(String name, String email){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) authentication.getPrincipal();
+		logger.info("user1: "+user);
+		user = loadUserByUsername(user.getUsername());
+		logger.info("user2: "+user);
+		/***
+		 * Now, we need to update name and email of this authenticate user.
+		 */
+		user.setName(name);
+		user.setEmail(email);
+		
+		user = userRepository.save(user);
+		
+		return new ResponseEntity<Object>(user,HttpStatus.ACCEPTED);
+		
+	}
+
 }

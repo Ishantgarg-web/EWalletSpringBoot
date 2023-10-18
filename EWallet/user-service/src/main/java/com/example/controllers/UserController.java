@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +37,31 @@ public class UserController {
 	public ResponseEntity homePage() {
 		return new ResponseEntity("This is home page", HttpStatus.OK);
 	}
+	
+	// Read user details api.
+	// Only authenticated user can access this api.
+	@GetMapping("/getUser")
+	public ResponseEntity getUserDetailsForUser(@RequestParam("username") String userName) {
+		return userService.getUser(userName);
+	}
+	
+	
+	// Update user Details api.
+	@PutMapping("/updateUser")
+	public ResponseEntity<Object> updateUserNameAndEmail(@RequestParam("name") String name,
+													@RequestParam("email") String email){
+		/**
+		 * AUTHENTICATED
+		 * 
+		 * User can update:
+		 * 1. Name
+		 * 2. email
+		 * 
+		 * for password: we need to create other api.
+		 */
+		return userService.updateUserNameAndEmail(name, email);
+	}
+	
 	
 	// this api will be called to get Authenicated user details.
 	@GetMapping("/user")
