@@ -30,6 +30,8 @@ public class UserSecurityConfig extends WebSecurityConfigurerAdapter{
 			.authorizeHttpRequests()
 			.antMatchers(HttpMethod.POST, "/user/**").permitAll()
 			.antMatchers(HttpMethod.GET, "/user/**").hasAuthority(UserConstants.SERVICE_AUTHORITY)
+			.antMatchers("/getUser/**").hasAuthority(UserConstants.USER_AUTHORITITY)
+			.antMatchers("/updateUser/**").hasAuthority(UserConstants.USER_AUTHORITITY)
 			.antMatchers("/admin/**").hasAuthority(UserConstants.SERVICE_AUTHORITY)
 			.antMatchers("/home/**").permitAll()
 			.antMatchers("/user/**").hasAuthority(UserConstants.USER_AUTHORITITY)
