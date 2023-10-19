@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +48,7 @@ public class UserController {
 	
 	
 	// Update user Details api.
-	@PutMapping("/updateUser")
+	@PutMapping("/update/User")
 	public ResponseEntity<Object> updateUserNameAndEmail(@RequestParam("name") String name,
 													@RequestParam("email") String email){
 		/**
@@ -62,6 +63,36 @@ public class UserController {
 		return userService.updateUserNameAndEmail(name, email);
 	}
 	
+	/**
+	 * user can edit their password.
+	 * @param - current password, new password, confirm password.
+	 * it is authenticated.
+	 * 
+	 * @return
+	 */
+	@PutMapping("/update/UserPassword")
+	public ResponseEntity<Object> updateUserPassword(@RequestParam("currentPassword") String currentPassword,
+					@RequestParam("newPassword") String newPassword,
+					@RequestParam("confirmPassword") String confirmPassword){
+		return userService.updateUserPassword(currentPassword, newPassword, confirmPassword);
+	}
+	
+	
+	/***
+	 * @apiNote - Implement delete api for user.
+	 * -> it is authenticated.
+	 * -> When user calls /delete api, then his current user should be deleted.
+	 *    -> his wallet should be deleted.
+	 *    -> his all transactions should be deleted.
+	 * To do this, we are doing communication using kafka.
+	 * 
+	 * @return
+	 */
+	
+	@DeleteMapping("/delete")
+	public ResponseEntity<Object> deleteUser(){
+		return userService.deleteUser();
+	}
 	
 	// this api will be called to get Authenicated user details.
 	@GetMapping("/user")

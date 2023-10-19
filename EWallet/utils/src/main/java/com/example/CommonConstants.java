@@ -5,7 +5,11 @@ public class CommonConstants {
     public static final String TRANSACTION_CREATE_TOPIC = "txn_create";
     public static final String TRANSACTION_COMPLETION_TOPIC = "txn_complete";
     public static final String WALLET_UPDATED_TOPIC = "wallet_update";
-    
+    /**
+     * this USER_DELETE_TOPIC used to delete the user from all three service
+     * user, transaction, wallet.
+     */
+    public static final String USER_DELETE_TOPIC = "user_delete_topic"; 
     
     public static final String WALLET_UPDATE_STATUS = "walletUpdateStatus";
 
@@ -25,4 +29,6 @@ public class CommonConstants {
     public static final String TRANSACTION_CREATION_TOPIC_AMOUNT = "amount";
     public static final String TRANSACTION_CREATION_TOPIC_PURPOSE = "paymentPurpose";
     public static final String TRANSACTION_CREATION_TOPIC_TRANSACTION_ID = "transactionId";
+    
+    public static final String USER_DELETE_USERID = "username";
 }

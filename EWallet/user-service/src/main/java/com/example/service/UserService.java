@@ -43,6 +43,7 @@ public class UserService implements UserDetailsService{
 	
 	@Override
 	public User loadUserByUsername(String username) throws UsernameNotFoundException {
+		logger.info("check1");
 		return userRepository.findByPhoneNo(username);
 	}
 	
@@ -77,8 +78,11 @@ public class UserService implements UserDetailsService{
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
 		
-		if(user.getUsername().equals(userName)) {
+		if(user != null && user.getUsername().equals(userName)) {
 			User tempUser = loadUserByUsername(userName);
+			if(tempUser == null) {
+				return new ResponseEntity<>("Please provide proper details",HttpStatus.BAD_REQUEST);
+			}
 			tempUser.setPassword("We can not show");
 			return new ResponseEntity<Object>(loadUserByUsername(userName),HttpStatus.OK);
 		}
@@ -101,6 +105,98 @@ public class UserService implements UserDetailsService{
 		
 		return new ResponseEntity<Object>(user,HttpStatus.ACCEPTED);
 		
+	}
+
+	public ResponseEntity<Object> updateUserPassword(String currentPassword, String newPassword,
+			String confirmPassword) {
+		
+		/**
+		 * It is authenticated.
+		 */
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String username = authentication.getName();
+		
+		User user = loadUserByUsername(username);
+		
+		logger.info("user: "+user);
+		/**
+		 * First encode the current password, to check with user stored password.
+		 */
+		String encodeCurrentPassword = passwordEncoder.encode(currentPassword);
+		logger.info("user: "+user);
+		
+		if(passwordEncoder.matches(currentPassword, user.getPassword())) {
+			/**
+			 * Check, newPassword is same as confirmPassword.
+			 */
+			if(newPassword.equals(confirmPassword)) {
+				/**
+				 * Need to update new password in db, but in encoded form.
+				 */
+				String encodeNewPassword = passwordEncoder.encode(newPassword);
+				user.setPassword(encodeNewPassword);
+				userRepository.save(user);
+				return new ResponseEntity<Object>("Password updated Successfully!!",
+						HttpStatus.ACCEPTED);
+			}
+			return new ResponseEntity<Object>("New Password not match with Confirm Password",
+					HttpStatus.BAD_REQUEST);
+		}
+		
+		return new ResponseEntity<Object>("Please provide correct current password", 
+				HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * This is working as kafka producer. is request goes well, then we can return successfull
+	 * response to user and redirect the user to home page.
+	 * @return
+	 */
+	public ResponseEntity<Object> deleteUser() {
+		
+		/**
+		 * First get Authenticated, user Details
+		 */
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = loadUserByUsername(authentication.getName());
+		
+		/**
+		 * Now, we need to delete this user.
+		 * First, request goes to wallet for delete wallet.
+		 * Second, request goes to transaction for delete all associated
+		 *  sender transactions to current user.
+		 * 
+		 */
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(CommonConstants.USER_DELETE_USERID, user.getUsername());
+		
+		try {
+			kafkaTemplate.send(CommonConstants.USER_DELETE_TOPIC,
+					objectMapper.writeValueAsString(jsonObject));
+		}catch(Exception e) {
+			logger.info("There is an error in sending kafka message for user deletion to"
+					+ "wallet and transaction services.");
+			return new ResponseEntity<Object>("There is error in deleting user", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		/**
+		 * After delete wallet and transaction for given user.
+		 * Now, need to delete user from user-service.
+		 */
+		
+		try {
+			userRepository.delete(user);
+		}catch (Exception e) {
+			return new ResponseEntity<Object>("Wallet and Transactions if there"
+					+ " are deleted successfully. But there is issue in delete user.",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<Object>("User with given username: "+user.getUsername()+""
+				+ " deleted successfully", HttpStatus.OK);
 	}
 
 }

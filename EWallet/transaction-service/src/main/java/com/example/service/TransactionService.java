@@ -152,4 +152,26 @@ public class TransactionService implements UserDetailsService{
 		return null;
 	}
 	
+	/**
+	 * Below method is used as kafka listener for topic USER_DELETE_TOPIC
+	 * @throws ParseException 
+	 * 
+	 */
+	@KafkaListener(topics = CommonConstants.USER_DELETE_TOPIC, groupId = "deleteUserGroupTransaction")
+	public void deleteTransactionsOfUser(String message) throws ParseException {
+		
+		logger.info("Coming in transaction Service to delete user");
+		
+		JSONObject jsonObject = (JSONObject) new JSONParser().parse(message);
+		
+		String username = (String) jsonObject.get(CommonConstants.USER_DELETE_USERID);
+		
+		logger.info("Given username to delete sender transactions is: "+username);
+		
+		/**
+		 * Now, delete all transactions where sender=username.
+		 */
+		transactionRepository.deleteSenderTransactions(username);
+	}
+	
 }
