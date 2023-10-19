@@ -115,5 +115,27 @@ public class WalletService {
 		logger.info("receiverWallet: "+receiverWallet);
 	}
 	
+	/**
+	 * Below method is used as kafka listener for topic USER_DELETE_TOPIC
+	 * @throws ParseException 
+	 * 
+	 */
+	@KafkaListener(topics = CommonConstants.USER_DELETE_TOPIC, groupId = "deleteUserGroupWallet")
+	public void deleteWalletOfUser(String message) throws ParseException {
+		
+		logger.info("Coming in wallet Service to delete user");
+		
+		JSONObject jsonObject = (JSONObject) new JSONParser().parse(message);
+		
+		String username = (String) jsonObject.get(CommonConstants.USER_DELETE_USERID);
+		
+		logger.info("Given username to delete wallet is: "+username);
+		
+		/**
+		 * Now, delete wallet where phone=username.
+		 */
+		walletRepository.deleteWallet(username);
+	}
+	
 	
 }

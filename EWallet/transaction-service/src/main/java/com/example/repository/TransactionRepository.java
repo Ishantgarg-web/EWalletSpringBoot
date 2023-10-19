@@ -27,4 +27,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 	@Query("update Transaction t set t.transactionStatus = ?2 where t.transactionId = ?1")
 	void updateTransaction(String transactionId, TransactionStatus transactionStatus);
 	
+	@Modifying
+	@Query("delete from Transaction where sender= ?1")
+	void deleteSenderTransactions(String username);
+	
 }
