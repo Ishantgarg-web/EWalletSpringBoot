@@ -31,5 +31,15 @@ public class UserApplication implements CommandLineRunner {
 //                .userIdentifierValue("txn123")
 //                .build();
 //        userRepository.save(txnServiceUser);
+        
+        
+//        User walletServiceUser = User.builder().phoneNo("wallet_service")
+//                .password(passwordEncoder.encode("wallet123"))
+//                .authorities(UserConstants.SERVICE_AUTHORITY)
+//                .email("wallet@gmail.com")
+//                .userIdentifier(UserIdentifier.SERVICE_ID)
+//                .userIdentifierValue("wallet123")
+//                .build();
+//        userRepository.save(walletServiceUser);
     }
 }

@@ -1,15 +1,30 @@
 package com.example.service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.RestTemplate;
 
 import com.example.CommonConstants;
 import com.example.TransactionStatus;
@@ -20,7 +35,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-public class WalletService {
+public class WalletService implements UserDetailsService{
 	
 	@Autowired
 	WalletRepository walletRepository;
@@ -31,7 +46,40 @@ public class WalletService {
 	@Autowired
 	ObjectMapper objectMapper;
 	
+	@Autowired
+	RestTemplate restTemplate;
+	
 	private static Logger logger = org.slf4j.LoggerFactory.getLogger(WalletService.class);
+	
+	
+	private JSONObject getUserFromUserService(String username){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBasicAuth("wallet_service","wallet123");
+        HttpEntity request = new HttpEntity(httpHeaders);
+        return restTemplate.exchange("http://localhost:6003/admin/user/"+username, HttpMethod.GET,
+                request,JSONObject.class).getBody();
+    }
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		JSONObject requestUser = getUserFromUserService(username);
+		// This requestUser is the object that we are getting from user_service.
+		
+		List<GrantedAuthority> authorities;
+        List<LinkedHashMap<String,String>> reqAuthorities = (List<LinkedHashMap<String,String>>)
+                requestUser.get("authorities");
+        authorities = reqAuthorities.stream().map(x -> x.get("authority"))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+        
+        // These above make authorities format to return.
+        
+        return new User((String) requestUser.get("username"),(String)requestUser.get("password")
+                ,authorities);
+		
+	}
+	
+	
 	
 	/**
 	 * need to create a method that will consume message from user-service
@@ -136,6 +184,25 @@ public class WalletService {
 		 */
 		walletRepository.deleteWallet(username);
 	}
+
+	public ResponseEntity<Object> getUserBalance(String username) {
+		
+		/**
+		 * need to return the balance of the given username.
+		 */
+		try {
+			Wallet wallet = walletRepository.findByPhone(username);
+			Double userBalance = wallet.getBalance();
+			return new ResponseEntity<Object>("Your Balance is: "+userBalance,
+					HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<Object>("Bank Server Down",
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	
 	
 	
 }

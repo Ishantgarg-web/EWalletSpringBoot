@@ -12,6 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,6 +39,11 @@ public class UserConfig {
 	@Bean
 	ObjectMapper getMapper() {
 		return new ObjectMapper();
+	}
+	
+	@Bean
+	RestTemplate getRestTemplate() {
+		return new RestTemplate();
 	}
 	
 	// Here, we are using Properties not HashMap, because Properties
