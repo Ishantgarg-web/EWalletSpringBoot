@@ -94,6 +94,12 @@ public class UserController {
 		return userService.deleteUser();
 	}
 	
+	@GetMapping("/transactionHistory")
+	public ResponseEntity<Object> seeTransactionHistory(){
+		return userService.getTransactionHistory();
+	}
+	
+	
 	// this api will be called to get Authenicated user details.
 	@GetMapping("/user")
 	public User getUserDetails() {

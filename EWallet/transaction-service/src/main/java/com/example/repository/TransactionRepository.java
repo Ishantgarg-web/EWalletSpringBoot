@@ -1,8 +1,12 @@
 package com.example.repository;
 
+import java.util.List;
+
+import org.json.simple.JSONObject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.TransactionStatus;
@@ -30,5 +34,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 	@Modifying
 	@Query("delete from Transaction where sender= ?1")
 	void deleteSenderTransactions(String username);
+	
+	@Query(value =  "select * from Transaction where sender = ?1 or receiver = ?1", nativeQuery = true)
+	List<Transaction> getAllTransactions(String username);
 	
 }

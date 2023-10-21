@@ -8,18 +8,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import com.example.UserConstants;
-import com.example.service.TransactionService;
-
+import com.example.service.WalletService;
 
 @Configuration
-public class TransactionSecurityConfig extends WebSecurityConfigurerAdapter{
+public class WalletSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
-	TransactionService transactionService;
+	WalletService walletService;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-		auth.userDetailsService(transactionService);
+		auth.userDetailsService(walletService);
 	}
 	
 	@Override
@@ -29,8 +28,8 @@ public class TransactionSecurityConfig extends WebSecurityConfigurerAdapter{
 		
 		http.httpBasic().and().csrf().disable()
 			.authorizeHttpRequests()
-			.antMatchers("/transact/**").hasAuthority(UserConstants.USER_AUTHORITITY)
-			.antMatchers("/transaction/history/**").hasAuthority(UserConstants.SERVICE_AUTHORITY)
+			.antMatchers("/wallet/**").hasAuthority(UserConstants.USER_AUTHORITITY)
 			.and().formLogin();
 	}
+	
 }

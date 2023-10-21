@@ -1,5 +1,8 @@
 package com.example.service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +34,7 @@ import com.example.CommonConstants;
 import com.example.PaymentPurpose;
 import com.example.TransactionStatus;
 import com.example.entities.Transaction;
+import com.example.repository.TransactionAuthRepository;
 import com.example.repository.TransactionRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +47,9 @@ public class TransactionService implements UserDetailsService{
 	
 	@Autowired
 	TransactionRepository transactionRepository;
+	
+	@Autowired
+	TransactionAuthRepository transactionAuthRepository;
 	
 	@Autowired
 	KafkaTemplate<String, String> kafkaTemplate;
@@ -172,6 +181,24 @@ public class TransactionService implements UserDetailsService{
 		 * Now, delete all transactions where sender=username.
 		 */
 		transactionRepository.deleteSenderTransactions(username);
+	}
+
+	public String getTransactionHistory(String username) throws JsonProcessingException {
+		/**
+		 * It should be call with service-authority.
+		 */
+		List<Transaction> allTransactions = transactionRepository.getAllTransactions(username);
+		
+//		for (Transaction txn : allTransactions) {
+//			Date date = txn.getCreatedOn();
+//		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//		    txn.setCreatedOn(dateFormat.format(date));
+//		}
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("return_records", allTransactions);
+		return objectMapper.writeValueAsString(jsonObject);
+		
 	}
 	
 }

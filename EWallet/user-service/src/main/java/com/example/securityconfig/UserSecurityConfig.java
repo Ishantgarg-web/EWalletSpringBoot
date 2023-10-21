@@ -33,6 +33,8 @@ public class UserSecurityConfig extends WebSecurityConfigurerAdapter{
 			.antMatchers("/getUser/**").hasAuthority(UserConstants.USER_AUTHORITITY)
 			.antMatchers("/update/**").hasAuthority(UserConstants.USER_AUTHORITITY)
 			.antMatchers("/delete/**").hasAuthority(UserConstants.USER_AUTHORITITY)
+			.antMatchers("/wallet/**").hasAuthority(UserConstants.USER_AUTHORITITY)
+			.antMatchers("/transactionHistory/**").hasAuthority(UserConstants.USER_AUTHORITITY)
 			.antMatchers("/admin/**").hasAuthority(UserConstants.SERVICE_AUTHORITY)
 			.antMatchers("/home/**").permitAll()
 			.antMatchers("/user/**").hasAuthority(UserConstants.USER_AUTHORITITY)

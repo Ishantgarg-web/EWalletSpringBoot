@@ -1,8 +1,13 @@
 package com.example.service;
 
+import java.util.List;
+
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.CommonConstants;
 import com.example.UserConstants;
@@ -20,6 +26,7 @@ import com.example.dtos.UserCreateRequest;
 import com.example.entities.User;
 import com.example.repository.UserRepository;
 import com.example.securityconfig.UserConfig;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,6 +42,9 @@ public class UserService implements UserDetailsService{
 	
 	@Autowired
 	ObjectMapper objectMapper;
+	
+	@Autowired
+	RestTemplate restTemplate;
 	
 	@Autowired
 	KafkaTemplate<String, String> kafkaTemplate;
@@ -199,4 +209,30 @@ public class UserService implements UserDetailsService{
 				+ " deleted successfully", HttpStatus.OK);
 	}
 
+	public ResponseEntity<Object> getTransactionHistory() {
+		logger.info("in the txnHistory");
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) authentication.getPrincipal();
+		logger.info("Logged in user with username is: "+user.getUsername());
+		
+		HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBasicAuth("txn_service","txn123");
+        HttpEntity request = new HttpEntity(httpHeaders);
+		
+        String authUserName = user.getUsername();
+        
+		try {
+			JSONObject txnHistoryObj =   restTemplate.exchange(
+					"http://localhost:6002/transaction/history/"+authUserName, 
+					HttpMethod.GET, 
+					request, 
+					JSONObject.class).getBody();
+			return new ResponseEntity<Object>(txnHistoryObj, HttpStatus.OK);
+		}catch (Exception e) {
+			logger.info("Exception: "+e);
+			return new ResponseEntity<Object>("Sorry!! Your Bank Server Down", 
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
