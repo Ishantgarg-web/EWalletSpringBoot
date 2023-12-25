@@ -1,5 +1,10 @@
 ## Description about the project
 
+Tech stack: Java, SpringBoot, JPA Hibernate, MySQL, Apache Kafka(for service-to-service communication), Spring Security(for authenticate the Requests).
+
+Postman API collection: [Link](https://api.postman.com/collections/20546720-8ef810b9-555d-478b-b975-385b527ca422?access_key=PMAT-01HJG14TJFP4D086XF38EKTZHM)
+
+
 1. there are 4 services - user, transaction, wallet, notification-service.
    All these services has their own database and running on different ports.
 
