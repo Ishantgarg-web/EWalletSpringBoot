@@ -1,8 +1,25 @@
-## Description about the project
+# Description about the project
 
 Tech stack: Java, SpringBoot, JPA Hibernate, MySQL, Apache Kafka(for service-to-service communication), Spring Security(for authenticate the Requests).
 
+## API Endpoints:
+1. user:
+   * POST /user -> will create new user with wallet(initial balance credited to 100)
+   * GET /getUser -> get Details of user
+   * PUT /update/User -> user can update email and name.
+   * PUT /update/UserPassword -> user can update the password.
+   * DELETE /delete -> delete the user.
+   * GET /transactionHistory -> get the transactionHistory of the user.
+   * GET /admin/user/{phoneNo} -> this will return User object based on given username. this api used by other services to get authenticated user details.
 
+2. transaction-service:
+   POST /transact: Initate the transaction.
+   GET /transaction/history/{username} -> getting the transactionHistory.
+
+3. Wallet-Service:
+   GET /wallet/balance -> return user wallet Balance.
+
+## Overview
 
 1. there are 4 services - user, transaction, wallet, notification-service.
    All these services has their own database and running on different ports.
