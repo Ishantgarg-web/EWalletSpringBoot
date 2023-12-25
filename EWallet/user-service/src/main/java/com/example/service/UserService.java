@@ -215,7 +215,6 @@ public class UserService implements UserDetailsService{
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
 		logger.info("Logged in user with username is: "+user.getUsername());
-		
 		HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBasicAuth("txn_service","txn123");
         HttpEntity request = new HttpEntity(httpHeaders);
